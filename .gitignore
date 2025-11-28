@@ -42,3 +42,5 @@ coverage
 .cache
 .parcel-cache
 .turbo
+
+API_DOCUMENTATION.md
