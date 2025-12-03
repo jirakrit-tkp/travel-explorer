@@ -67,6 +67,12 @@ const handleSelectSuggestion = (trip: Trip) => {
   fetchTrips(trip.title)
 }
 
+const handleTagSelected = (tag: string) => {
+  searchQuery.value = tag
+  suggestions.value = []
+  fetchTrips(tag)
+}
+
 const handleClickOutside = (event: MouseEvent) => {
   if (!searchContainerRef.value) {
     return
@@ -164,7 +170,12 @@ onMounted(() => {
           </div>
 
           <div v-else class="flex flex-col gap-10 kanit-regular">
-            <TripCard v-for="trip in trips" :key="trip.id" :trip="trip" />
+            <TripCard
+              v-for="trip in trips"
+              :key="trip.id"
+              :trip="trip"
+              @tagSelected="handleTagSelected"
+            />
           </div>
         </div>
       </section>

@@ -83,7 +83,7 @@ onMounted(() => {
 <template>
   <DefaultLayout>
     <div class="min-h-screen bg-gray-50 py-8">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div v-if="loading" class="text-center py-12">
           <p class="text-gray-600">กำลังโหลด...</p>
         </div>

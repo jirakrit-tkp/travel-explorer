@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { useAuth } from '../composables/useAuth'
 
 const router = useRouter()
@@ -34,15 +35,16 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg px-8 py-10 space-y-8">
+  <DefaultLayout>
+    <div class="min-h-[calc(100vh-8rem)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-md w-full bg-white rounded-2xl shadow-lg px-8 py-10 space-y-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
           เข้าสู่ระบบ
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
           หรือ
-        <router-link to="/register" class="font-medium text-sky-600 hover:text-sky-500">
+          <router-link to="/register" class="font-medium text-sky-600 hover:text-sky-500">
             สมัครสมาชิก
           </router-link>
         </p>
@@ -89,5 +91,6 @@ const handleSubmit = async () => {
       </form>
     </div>
   </div>
+  </DefaultLayout>
 </template>
 

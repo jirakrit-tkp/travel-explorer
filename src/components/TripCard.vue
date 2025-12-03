@@ -13,6 +13,10 @@ const props = defineProps<{
   trip: Trip
 }>()
 
+const emit = defineEmits<{
+  (event: 'tagSelected', tag: string): void
+}>()
+
 const MAX_PREVIEW_LENGTH = 200
 
 const previewText = computed(() => {
@@ -28,6 +32,10 @@ const hasMore = computed(() => {
   const description = props.trip.description ?? ''
   return description.length > MAX_PREVIEW_LENGTH
 })
+
+const handleTagClick = (tag: string) => {
+  emit('tagSelected', tag)
+}
 </script>
 
 <template>
@@ -86,16 +94,15 @@ const hasMore = computed(() => {
         </section>
 
         <div v-if="trip.tags && trip.tags.length > 0" class="mt-3 flex flex-wrap gap-2">
-          <span
-            v-for="tag in trip.tags.slice(0, 3)"
+          <button
+            v-for="tag in trip.tags"
             :key="tag"
-            class="px-2 py-1 bg-sky-100 text-sky-800 text-xs rounded-full"
+            type="button"
+            class="px-2 py-1 bg-sky-100 text-sky-800 text-xs rounded-full cursor-pointer hover:bg-sky-200"
+            @click.stop.prevent="handleTagClick(tag)"
           >
             {{ tag }}
-          </span>
-          <span v-if="trip.tags.length > 3" class="px-2 py-1 text-gray-500 text-xs">
-            +{{ trip.tags.length - 3 }}
-          </span>
+          </button>
         </div>
       </article>
     </section>
