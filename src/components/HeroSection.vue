@@ -3,21 +3,21 @@
 </script>
 
 <template>
-  <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+  <section class="bg-gradient-to-br from-sky-50 to-indigo-100 py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center">
         <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
           ค้นหาสถานที่ท่องเที่ยว
-          <span class="text-blue-600">ที่คุณชื่นชอบ</span>
+          <span class="text-sky-600">ที่คุณชื่นชอบ</span>
         </h1>
         <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           สำรวจสถานที่ท่องเที่ยวที่น่าสนใจทั่วประเทศไทย พร้อมคำแนะนำและรีวิวจากผู้เชี่ยวชาญ
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg">
+          <button class="bg-sky-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-sky-600 transition-colors shadow-lg">
             เริ่มต้นค้นหา
           </button>
-          <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors border-2 border-blue-600">
+          <button class="bg-white text-sky-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors border-2 border-sky-600">
             ดูสถานที่แนะนำ
           </button>
         </div>
@@ -29,9 +29,9 @@
             <input
               type="text"
               placeholder="หาที่เกี่ยวแล้วไปกัน.."
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            <button class="bg-sky-500 text-white px-6 py-3 rounded-lg hover:bg-sky-600 transition-colors">
               ค้นหา
             </button>
           </div>

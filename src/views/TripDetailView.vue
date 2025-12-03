@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { tripsAPI } from '../services/api'
 import { useAuth } from '../composables/useAuth'
+import { markdownToHtml } from '../utils/markdown'
 import type { AxiosResponse } from 'axios'
 
 interface Trip {
@@ -29,6 +30,14 @@ const trip = ref<Trip | null>(null)
 const loading = ref(false)
 const error = ref('')
 const deleting = ref(false)
+
+const descriptionHtml = computed(() => {
+  if (!trip.value) {
+    return ''
+  }
+
+  return markdownToHtml(trip.value.description ?? '')
+})
 
 const isOwner = computed(() => {
   return isAuthenticated.value && user.value && trip.value && user.value.userId === trip.value.authorId
@@ -81,7 +90,7 @@ onMounted(() => {
 
         <div v-else-if="error" class="text-center py-12">
           <p class="text-red-600">{{ error }}</p>
-          <router-link to="/" class="mt-4 inline-block text-blue-600 hover:text-blue-700">
+          <router-link to="/" class="mt-4 inline-block text-sky-600 hover:text-sky-700">
             กลับหน้าหลัก
           </router-link>
         </div>
@@ -112,7 +121,7 @@ onMounted(() => {
               <div v-if="isOwner" class="flex gap-2">
                 <router-link
                   :to="`/trips/${trip.id}/edit`"
-                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  class="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
                 >
                   แก้ไข
                 </router-link>
@@ -126,14 +135,14 @@ onMounted(() => {
               </div>
             </div>
 
-            <p class="text-gray-700 mb-4 whitespace-pre-line">{{ trip.description }}</p>
+            <p class="text-gray-700 mb-4" v-html="descriptionHtml" />
 
             <!-- Tags -->
             <div v-if="trip.tags && trip.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
               <span
                 v-for="tag in trip.tags"
                 :key="tag"
-                class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                class="px-3 py-1 bg-sky-100 text-sky-800 text-sm rounded-full"
               >
                 {{ tag }}
               </span>

@@ -104,7 +104,7 @@ const handleSubmit = async () => {
               v-model="title"
               type="text"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="เช่น เที่ยวเกาะช้าง"
             />
           </div>
@@ -117,7 +117,7 @@ const handleSubmit = async () => {
               id="description"
               v-model="description"
               rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="อธิบายเกี่ยวกับทริปนี้..."
             />
           </div>
@@ -130,7 +130,7 @@ const handleSubmit = async () => {
               id="tags"
               v-model="tags"
               type="text"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               placeholder="เช่น เกาะ, ทะเล, ธรรมชาติ"
             />
           </div>
@@ -145,7 +145,7 @@ const handleSubmit = async () => {
                 v-model="latitude"
                 type="number"
                 step="any"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                 placeholder="13.7563"
               />
             </div>
@@ -158,7 +158,7 @@ const handleSubmit = async () => {
                 v-model="longitude"
                 type="number"
                 step="any"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                 placeholder="100.5018"
               />
             </div>
@@ -174,7 +174,7 @@ const handleSubmit = async () => {
               multiple
               accept="image/*"
               @change="handleFileSelect"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
             <p class="mt-2 text-sm text-gray-500">
               เลือกได้หลายไฟล์ ({{ selectedFiles.length }} ไฟล์ที่เลือก)
@@ -189,7 +189,7 @@ const handleSubmit = async () => {
             <button
               type="submit"
               :disabled="submitting || uploading"
-              class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex-1 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ submitting ? 'กำลังสร้าง...' : uploading ? 'กำลังอัปโหลด...' : 'สร้างทริป' }}
             </button>

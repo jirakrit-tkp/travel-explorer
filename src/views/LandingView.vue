@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { Search } from 'lucide-vue-next'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import TripCard from '../components/TripCard.vue'
 import { tripsAPI } from '../services/api'
@@ -15,6 +16,8 @@ interface Trip {
 
 const trips = ref<Trip[]>([])
 const searchQuery = ref('')
+const suggestions = ref<Trip[]>([])
+const searchContainerRef = ref<HTMLElement | null>(null)
 const loading = ref(false)
 const error = ref('')
 
@@ -41,41 +44,112 @@ const handleSearch = () => {
   fetchTrips(searchQuery.value)
 }
 
+let suggestionTimeoutId: number | null = null
+
+const fetchSuggestions = async (query: string) => {
+  if (!query.trim()) {
+    suggestions.value = []
+    return
+  }
+
+  try {
+    const response: AxiosResponse<Trip[]> = await tripsAPI.search(query.trim())
+    suggestions.value = response.data
+  } catch (err) {
+    // ไม่ต้องแสดง error แค่ไม่ขึ้น suggestion
+    console.error(err)
+  }
+}
+
+const handleSelectSuggestion = (trip: Trip) => {
+  searchQuery.value = trip.title
+  suggestions.value = []
+  fetchTrips(trip.title)
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (!searchContainerRef.value) {
+    return
+  }
+
+  const target = event.target as HTMLElement | null
+  if (target && !searchContainerRef.value.contains(target)) {
+    suggestions.value = []
+  }
+}
+
+watch(
+  searchQuery,
+  (value) => {
+    if (suggestionTimeoutId !== null) {
+      window.clearTimeout(suggestionTimeoutId)
+    }
+
+    suggestionTimeoutId = window.setTimeout(() => {
+      fetchSuggestions(value)
+    }, 300)
+  },
+)
+
 onMounted(() => {
   fetchTrips()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+onMounted(() => {
+  // already handled in onMounted above
 })
 </script>
 
 <template>
   <DefaultLayout>
     <div class="min-h-screen bg-gray-50">
-      <!-- Search Section -->
-      <section class="bg-white py-8 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex flex-col sm:flex-row gap-4 items-center">
-            <div class="flex-1 w-full">
-              <input
-                v-model="searchQuery"
-                type="text"
-                placeholder="ค้นหาทริป..."
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                @keyup.enter="handleSearch"
-              />
-            </div>
-            <button
-              @click="handleSearch"
-              class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-            >
-              ค้นหา
-            </button>
-          </div>
-        </div>
-      </section>
-
       <!-- Trips Section -->
       <section class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-3xl font-bold text-gray-900 mb-8">ทริปทั้งหมด</h2>
+          <header class="mb-8">
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+              <div ref="searchContainerRef" class="relative flex-1 w-full">
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="ค้นหาทริป..."
+                  class="w-full px-4 py-3 pr-10 border-b-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                  @keyup.enter="handleSearch"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-sky-600 transition-colors"
+                  @click="handleSearch"
+                  aria-label="ค้นหา"
+                >
+                  <Search class="h-5 w-5" />
+                </button>
+
+                <ul
+                  v-if="suggestions.length > 0 && searchQuery.trim()"
+                  class="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
+                >
+                  <li
+                    v-for="trip in suggestions"
+                    :key="trip.id"
+                  >
+                    <button
+                      type="button"
+                      class="w-full text-left px-4 py-2 hover:bg-sky-50"
+                      @click="handleSelectSuggestion(trip)"
+                    >
+                      {{ trip.title }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </header>
 
           <div v-if="loading" class="text-center py-12">
             <p class="text-gray-600">กำลังโหลด...</p>
@@ -85,11 +159,11 @@ onMounted(() => {
             <p class="text-red-600">{{ error }}</p>
           </div>
 
-          <div v-else-if="trips.length === 0" class="text-center py-12">
+          <div v-else-if="trips.length === 0" class="text-center py-12 kanit-regular">
             <p class="text-gray-600">ไม่พบทริป</p>
           </div>
 
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-else class="flex flex-col gap-10 kanit-regular">
             <TripCard v-for="trip in trips" :key="trip.id" :trip="trip" />
           </div>
         </div>

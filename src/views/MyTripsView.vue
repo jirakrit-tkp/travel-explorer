@@ -44,7 +44,7 @@ onMounted(() => {
           <h1 class="text-3xl font-bold text-gray-900">ทริปของฉัน</h1>
           <router-link
             to="/trips/create"
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            class="px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
           >
             + สร้างทริปใหม่
           </router-link>
@@ -62,13 +62,13 @@ onMounted(() => {
           <p class="text-gray-600 mb-4">คุณยังไม่มีทริป</p>
           <router-link
             to="/trips/create"
-            class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
           >
             สร้างทริปแรกของคุณ
           </router-link>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="flex flex-col gap-10">
           <TripCard v-for="trip in trips" :key="trip.id" :trip="trip" />
         </div>
       </div>

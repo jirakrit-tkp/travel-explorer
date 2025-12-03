@@ -173,7 +173,7 @@ onMounted(() => {
           <p class="text-red-600 mb-4">{{ error }}</p>
           <router-link
             to="/my-trips"
-            class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
           >
             กลับไปทริปของฉัน
           </router-link>
@@ -189,7 +189,7 @@ onMounted(() => {
               v-model="title"
               type="text"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
           </div>
 
@@ -201,7 +201,7 @@ onMounted(() => {
               id="description"
               v-model="description"
               rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
           </div>
 
@@ -213,7 +213,7 @@ onMounted(() => {
               id="tags"
               v-model="tags"
               type="text"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
           </div>
 
@@ -227,7 +227,7 @@ onMounted(() => {
                 v-model="latitude"
                 type="number"
                 step="any"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -239,7 +239,7 @@ onMounted(() => {
                 v-model="longitude"
                 type="number"
                 step="any"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -280,7 +280,7 @@ onMounted(() => {
               multiple
               accept="image/*"
               @change="handleFileSelect"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
             <p class="mt-2 text-sm text-gray-500">
               เลือกได้หลายไฟล์ ({{ selectedFiles.length }} ไฟล์ที่เลือก)
@@ -295,7 +295,7 @@ onMounted(() => {
             <button
               type="submit"
               :disabled="submitting || uploading"
-              class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex-1 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ submitting ? 'กำลังอัปเดต...' : uploading ? 'กำลังอัปโหลด...' : 'บันทึก' }}
             </button>
