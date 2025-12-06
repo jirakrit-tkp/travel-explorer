@@ -222,7 +222,7 @@ onBeforeUnmount(() => {
               class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 mb-8"
             >
               <button
-                v-for="(photo, index) in trip.photos"
+                v-for="(_, index) in trip.photos"
                 :key="index"
                 @click="goToPhoto(index)"
                 :class="[

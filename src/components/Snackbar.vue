@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
 
 interface Props {
   message: string

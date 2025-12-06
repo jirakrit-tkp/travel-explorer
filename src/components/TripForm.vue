@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, onBeforeUnmount, onMounted, watch, computed } from 'vue'
+import { ref, nextTick, onBeforeUnmount, watch, computed } from 'vue'
 import { tripsAPI, filesAPI } from '../services/api'
 import type { AxiosResponse } from 'axios'
 import { Bold, Italic, Link, List, Code, X } from 'lucide-vue-next'
@@ -263,8 +263,10 @@ const setMainPhoto = (index: number) => {
     return
   }
 
-  const [file] = selectedFiles.value.splice(index, 1)
-  const [url] = previewUrls.value.splice(index, 1)
+  const removedFiles = selectedFiles.value.splice(index, 1)
+  const removedUrls = previewUrls.value.splice(index, 1)
+  const file = removedFiles[0]
+  const url = removedUrls[0]
 
   if (!file || !url) {
     return
@@ -294,7 +296,8 @@ const setMainExistingPhoto = (index: number) => {
     return
   }
 
-  const [url] = existingPhotos.value.splice(index, 1)
+  const removed = existingPhotos.value.splice(index, 1)
+  const url = removed[0]
   if (!url) {
     return
   }
@@ -424,7 +427,12 @@ const handleSubmit = async () => {
     let allPhotos: string[] = []
     if (existingPhotos.value.length > 0 && newPhotoUrls.length > 0) {
       // New photo[0] should be main, so put it first, then existing photos, then rest of new photos
-      allPhotos = [newPhotoUrls[0], ...existingPhotos.value, ...newPhotoUrls.slice(1)]
+      const firstNewPhoto = newPhotoUrls[0]
+      if (firstNewPhoto) {
+        allPhotos = [firstNewPhoto, ...existingPhotos.value, ...newPhotoUrls.slice(1)]
+      } else {
+        allPhotos = [...existingPhotos.value, ...newPhotoUrls]
+      }
     } else if (existingPhotos.value.length > 0) {
       // Only existing photos
       allPhotos = [...existingPhotos.value]

@@ -8,11 +8,14 @@ interface Props {
   confirmButtonClass?: string
 }
 
+// Props are used in template
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = withDefaults(defineProps<Props>(), {
   confirmText: 'ยืนยัน',
   cancelText: 'ยกเลิก',
   confirmButtonClass: 'bg-red-500 hover:bg-red-600',
 })
+void props // Mark as used
 
 const emit = defineEmits<{
   (event: 'confirm'): void
