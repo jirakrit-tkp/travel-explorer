@@ -352,7 +352,7 @@ onBeforeUnmount(() => {
       <div class="flex flex-wrap gap-4">
         <button
           type="button"
-          class="flex items-center justify-center h-32 w-32 border-2 border-dashed border-gray-300 rounded-lg text-gray-400 hover:border-sky-400 hover:text-sky-500 transition-colors text-sm font-medium"
+          class="flex items-center justify-center h-32 w-32 border-2 border-dashed border-gray-300 rounded-lg text-gray-400 hover:border-sky-400 hover:text-sky-500 transition-colors text-sm font-medium cursor-pointer"
           @click="openPhotoPicker"
         >
           + เพิ่มรูป
@@ -367,7 +367,7 @@ onBeforeUnmount(() => {
           <button
             v-if="index !== 0"
             type="button"
-            class="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white"
+            class="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white cursor-pointer"
             @click.stop="setMainExistingPhoto(index)"
           >
             Main
@@ -380,7 +380,7 @@ onBeforeUnmount(() => {
           </span>
           <button
             type="button"
-            class="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white shadow-md"
+            class="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white shadow-md cursor-pointer"
             @click.stop="removeExistingPhoto(url)"
             aria-label="ลบรูปนี้"
           >
@@ -399,7 +399,7 @@ onBeforeUnmount(() => {
           <button
             v-if="index !== 0"
             type="button"
-            class="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white"
+            class="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white cursor-pointer"
             @click.stop="setMainPhoto(index)"
           >
             Main
@@ -412,7 +412,7 @@ onBeforeUnmount(() => {
           </span>
           <button
             type="button"
-            class="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white shadow-md"
+            class="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white shadow-md cursor-pointer"
             @click.stop="removePhotoAt(index)"
             aria-label="ลบรูปนี้"
           >
@@ -480,7 +480,7 @@ onBeforeUnmount(() => {
       <div class="mb-2 flex flex-wrap gap-2 text-xs text-gray-600">
         <button
           type="button"
-          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100"
+          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100 cursor-pointer"
           @click="formatBold"
         >
           <Bold class="h-3 w-3" />
@@ -488,7 +488,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100"
+          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100 cursor-pointer"
           @click="formatItalic"
         >
           <Italic class="h-3 w-3" />
@@ -496,7 +496,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100"
+          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100 cursor-pointer"
           @click="formatCode"
         >
           <Code class="h-3 w-3" />
@@ -504,7 +504,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100"
+          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100 cursor-pointer"
           @click="formatBullet"
         >
           <List class="h-3 w-3" />
@@ -512,7 +512,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           type="button"
-          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100"
+          class="flex items-center gap-1 rounded border border-gray-300 px-2 py-1 hover:bg-gray-100 cursor-pointer"
           @click="formatLink"
         >
           <Link class="h-3 w-3" />
@@ -574,7 +574,7 @@ onBeforeUnmount(() => {
       <button
         type="submit"
         :disabled="submitting || uploading"
-        class="flex-1 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        class="flex-1 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
         {{
           submitting

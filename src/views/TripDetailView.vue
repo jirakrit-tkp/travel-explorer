@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Edit, Trash2 } from 'lucide-vue-next'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { tripsAPI } from '../services/api'
 import { useAuth } from '../composables/useAuth'
+import { useSnackbar } from '../composables/useSnackbar'
+import { useConfirm } from '../composables/useConfirm'
 import { markdownToHtml } from '../utils/markdown'
 import type { AxiosResponse } from 'axios'
 
@@ -25,6 +28,8 @@ interface Trip {
 const route = useRoute()
 const router = useRouter()
 const { user, isAuthenticated } = useAuth()
+const { showSnackbar } = useSnackbar()
+const { confirm: showConfirm } = useConfirm()
 
 const trip = ref<Trip | null>(null)
 const loading = ref(false)
@@ -59,16 +64,32 @@ const fetchTrip = async () => {
 }
 
 const handleDelete = async () => {
-  if (!trip.value || !confirm('คุณแน่ใจหรือไม่ว่าต้องการลบทริปนี้?')) {
+  if (!trip.value) {
+    return
+  }
+
+  const confirmed = await showConfirm({
+    title: 'ยืนยันการลบ',
+    message: 'คุณแน่ใจหรือไม่ว่าต้องการลบทริปนี้?',
+  })
+
+  if (!confirmed) {
     return
   }
 
   deleting.value = true
   try {
     await tripsAPI.delete(trip.value.id)
+    showSnackbar({
+      message: 'ลบทริปเรียบร้อยแล้ว',
+      type: 'success',
+    })
     router.push('/my-trips')
   } catch (err) {
-    alert('ไม่สามารถลบทริปได้')
+    showSnackbar({
+      message: 'ไม่สามารถลบทริปได้',
+      type: 'error',
+    })
     console.error(err)
   } finally {
     deleting.value = false
@@ -121,16 +142,20 @@ onMounted(() => {
               <div v-if="isOwner" class="flex gap-2">
                 <router-link
                   :to="`/trips/${trip.id}/edit`"
-                  class="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
+                  class="p-2 text-sky-500 rounded-lg hover:text-sky-600 transition-colors cursor-pointer"
+                  aria-label="แก้ไขทริป"
+                  title="แก้ไขทริป"
                 >
-                  แก้ไข
+                  <Edit class="h-5 w-5" />
                 </router-link>
                 <button
                   @click="handleDelete"
                   :disabled="deleting"
-                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                  class="p-2 text-red-500 rounded-lg hover:text-red-600 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                  aria-label="ลบทริป"
+                  title="ลบทริป"
                 >
-                  {{ deleting ? 'กำลังลบ...' : 'ลบ' }}
+                  <Trash2 class="h-5 w-5" />
                 </button>
               </div>
             </div>

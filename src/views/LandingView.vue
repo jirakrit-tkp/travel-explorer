@@ -12,6 +12,7 @@ interface Trip {
   description: string
   photos: string[]
   tags: string[]
+  authorId?: number
 }
 
 const trips = ref<Trip[]>([])
@@ -129,7 +130,7 @@ onMounted(() => {
                 />
                 <button
                   type="button"
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-sky-600 transition-colors"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-sky-600 transition-colors cursor-pointer"
                   @click="handleSearch"
                   aria-label="ค้นหา"
                 >
@@ -175,6 +176,7 @@ onMounted(() => {
               :key="trip.id"
               :trip="trip"
               @tagSelected="handleTagSelected"
+              @deleted="(tripId) => trips = trips.filter(t => t.id !== tripId)"
             />
           </div>
         </div>

@@ -11,6 +11,7 @@ interface Trip {
   description: string
   photos: string[]
   tags: string[]
+  authorId?: number
 }
 
 const trips = ref<Trip[]>([])
@@ -44,7 +45,7 @@ onMounted(() => {
           <h1 class="text-3xl font-bold text-gray-900">ทริปของฉัน</h1>
           <router-link
             to="/trips/create"
-            class="px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
+            class="px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold cursor-pointer"
           >
             + สร้างทริปใหม่
           </router-link>
@@ -62,14 +63,19 @@ onMounted(() => {
           <p class="text-gray-600 mb-4">คุณยังไม่มีทริป</p>
           <router-link
             to="/trips/create"
-            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
+            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold cursor-pointer"
           >
             สร้างทริปแรกของคุณ
           </router-link>
         </div>
 
         <div v-else class="flex flex-col gap-10">
-          <TripCard v-for="trip in trips" :key="trip.id" :trip="trip" />
+          <TripCard
+            v-for="trip in trips"
+            :key="trip.id"
+            :trip="trip"
+            @deleted="(tripId) => trips = trips.filter(t => t.id !== tripId)"
+          />
         </div>
       </div>
     </div>

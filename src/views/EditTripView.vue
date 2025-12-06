@@ -74,7 +74,7 @@ onMounted(() => {
           <p class="text-red-600 mb-4">{{ error }}</p>
           <router-link
             to="/my-trips"
-            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold"
+            class="inline-block px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-semibold cursor-pointer"
           >
             กลับไปทริปของฉัน
           </router-link>
@@ -89,7 +89,7 @@ onMounted(() => {
           <template #cancel-button>
             <router-link
               :to="`/trips/${route.params.id}`"
-              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold cursor-pointer"
             >
               ยกเลิก
             </router-link>
