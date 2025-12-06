@@ -12,6 +12,7 @@ interface Trip {
   photos: string[]
   tags: string[]
   authorId?: number
+  createdAt?: string
 }
 
 const trips = ref<Trip[]>([])
@@ -67,7 +68,14 @@ const fetchTrips = async () => {
   currentPage.value = 1 // Reset to first page when fetching new data
   try {
     const response: AxiosResponse<Trip[]> = await tripsAPI.getMine()
-    trips.value = response.data
+    // Sort by createdAt (newest first) or by id (newest first) if createdAt not available
+    trips.value = response.data.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+      // Fallback to id (higher id = newer)
+      return b.id - a.id
+    })
   } catch (err) {
     error.value = 'ไม่สามารถโหลดทริปได้'
     console.error(err)

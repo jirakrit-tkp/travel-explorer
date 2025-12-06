@@ -13,6 +13,7 @@ interface Trip {
   photos: string[]
   tags: string[]
   authorId?: number
+  createdAt?: string
 }
 
 const trips = ref<Trip[]>([])
@@ -76,7 +77,14 @@ const fetchTrips = async (query?: string) => {
     } else {
       response = await tripsAPI.getAll()
     }
-    trips.value = response.data
+    // Sort by createdAt (newest first) or by id (newest first) if createdAt not available
+    trips.value = response.data.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      }
+      // Fallback to id (higher id = newer)
+      return b.id - a.id
+    })
   } catch (err) {
     error.value = 'ไม่สามารถโหลดทริปได้'
     console.error(err)

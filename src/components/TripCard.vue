@@ -14,6 +14,7 @@ interface Trip {
   photos: string[]
   tags: string[]
   authorId?: number
+  createdAt?: string
 }
 
 const props = defineProps<{
@@ -32,9 +33,29 @@ const { confirm: showConfirm } = useConfirm()
 
 const MAX_PREVIEW_LENGTH = 200
 
+// Function to clean markdown syntax
+const cleanMarkdown = (text: string): string => {
+  let cleaned = text
+  // Replace \n with space
+  cleaned = cleaned.replace(/\\n/g, ' ')
+  // Remove markdown syntax
+  cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1') // Bold **text**
+  cleaned = cleaned.replace(/\*(.+?)\*/g, '$1') // Italic *text*
+  cleaned = cleaned.replace(/`([^`]+)`/g, '$1') // Code `text`
+  cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Links [text](url)
+  cleaned = cleaned.replace(/#+\s*/g, '') // Headers # text
+  cleaned = cleaned.replace(/^[-*+]\s+/gm, '') // List items - item
+  cleaned = cleaned.replace(/^\d+\.\s+/gm, '') // Numbered list 1. item
+  cleaned = cleaned.replace(/>\s*/g, '') // Blockquote > text
+  cleaned = cleaned.replace(/~~(.+?)~~/g, '$1') // Strikethrough ~~text~~
+  // Replace multiple spaces/newlines with single space
+  cleaned = cleaned.replace(/\s+/g, ' ').trim()
+  return cleaned
+}
+
 const previewText = computed(() => {
   const raw = props.trip.description ?? ''
-  const description = raw.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim()
+  const description = cleanMarkdown(raw)
   if (description.length <= MAX_PREVIEW_LENGTH) {
     return description
   }
