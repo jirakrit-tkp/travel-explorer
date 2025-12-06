@@ -346,11 +346,12 @@ const validateForm = () => {
   }
 
   // Validate latitude
-  if (!latitude.value.trim()) {
+  const latStr = String(latitude.value || '').trim()
+  if (!latStr) {
     errors.value.latitude = true
     isValid = false
   } else {
-    const lat = parseFloat(latitude.value)
+    const lat = parseFloat(latStr)
     if (isNaN(lat) || lat < -90 || lat > 90) {
       errors.value.latitude = true
       isValid = false
@@ -358,11 +359,12 @@ const validateForm = () => {
   }
 
   // Validate longitude
-  if (!longitude.value.trim()) {
+  const lonStr = String(longitude.value || '').trim()
+  if (!lonStr) {
     errors.value.longitude = true
     isValid = false
   } else {
-    const lon = parseFloat(longitude.value)
+    const lon = parseFloat(lonStr)
     if (isNaN(lon) || lon < -180 || lon > 180) {
       errors.value.longitude = true
       isValid = false
