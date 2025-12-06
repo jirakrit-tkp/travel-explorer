@@ -47,6 +47,16 @@ const submitting = ref(false)
 const error = ref('')
 const descriptionTextareaRef = ref<HTMLTextAreaElement | null>(null)
 
+// Validation error states
+const errors = ref({
+  title: false,
+  description: false,
+  tags: false,
+  photos: false,
+  latitude: false,
+  longitude: false,
+})
+
 // Load initial data for edit mode
 watch(
   () => props.initialData,
@@ -62,6 +72,43 @@ watch(
   },
   { immediate: true },
 )
+
+// Clear errors when user starts typing
+watch(title, () => {
+  if (errors.value.title) {
+    errors.value.title = false
+  }
+})
+
+watch(description, () => {
+  if (errors.value.description) {
+    errors.value.description = false
+  }
+})
+
+watch(tags, () => {
+  if (errors.value.tags) {
+    errors.value.tags = false
+  }
+})
+
+watch(latitude, () => {
+  if (errors.value.latitude) {
+    errors.value.latitude = false
+  }
+})
+
+watch(longitude, () => {
+  if (errors.value.longitude) {
+    errors.value.longitude = false
+  }
+})
+
+watch([existingPhotos, selectedFiles], () => {
+  if (errors.value.photos) {
+    errors.value.photos = false
+  }
+})
 
 const wrapSelection = (before: string, after?: string) => {
   const el = descriptionTextareaRef.value
@@ -261,11 +308,76 @@ const deletePhotos = async () => {
   }
 }
 
+const validateForm = () => {
+  // Reset all errors
+  errors.value = {
+    title: false,
+    description: false,
+    tags: false,
+    photos: false,
+    latitude: false,
+    longitude: false,
+  }
+
+  let isValid = true
+
+  // Validate title
+  if (!title.value.trim()) {
+    errors.value.title = true
+    isValid = false
+  }
+
+  // Validate description
+  if (!description.value.trim()) {
+    errors.value.description = true
+    isValid = false
+  }
+
+  // Validate tags
+  if (!tags.value.trim()) {
+    errors.value.tags = true
+    isValid = false
+  }
+
+  // Validate photos (must have at least one photo)
+  if (existingPhotos.value.length === 0 && selectedFiles.value.length === 0) {
+    errors.value.photos = true
+    isValid = false
+  }
+
+  // Validate latitude
+  if (!latitude.value.trim()) {
+    errors.value.latitude = true
+    isValid = false
+  } else {
+    const lat = parseFloat(latitude.value)
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+      errors.value.latitude = true
+      isValid = false
+    }
+  }
+
+  // Validate longitude
+  if (!longitude.value.trim()) {
+    errors.value.longitude = true
+    isValid = false
+  } else {
+    const lon = parseFloat(longitude.value)
+    if (isNaN(lon) || lon < -180 || lon > 180) {
+      errors.value.longitude = true
+      isValid = false
+    }
+  }
+
+  return isValid
+}
+
 const handleSubmit = async () => {
   error.value = ''
 
-  if (!title.value.trim()) {
-    error.value = 'กรุณากรอกชื่อทริป'
+  // Validate all fields
+  if (!validateForm()) {
+    error.value = 'กรุณากรอกข้อมูลให้ครบถ้วน'
     return
   }
 
@@ -346,13 +458,18 @@ onBeforeUnmount(() => {
     <!-- 1. Photos -->
     <section>
       <label for="photos" class="block text-sm font-medium text-gray-700 mb-2">
-        รูปภาพ
+        รูปภาพ <span class="text-red-500">*</span>
       </label>
 
       <div class="flex flex-wrap gap-4">
         <button
           type="button"
-          class="flex items-center justify-center h-32 w-32 border-2 border-dashed border-gray-300 rounded-lg text-gray-400 hover:border-sky-400 hover:text-sky-500 transition-colors text-sm font-medium cursor-pointer"
+          :class="[
+            'flex items-center justify-center h-32 w-32 border-2 border-dashed rounded-lg text-gray-400 hover:text-sky-500 transition-colors text-sm font-medium cursor-pointer',
+            errors.photos
+              ? 'border-red-500 hover:border-red-600'
+              : 'border-gray-300 hover:border-sky-400',
+          ]"
           @click="openPhotoPicker"
         >
           + เพิ่มรูป
@@ -436,7 +553,10 @@ onBeforeUnmount(() => {
         class="sr-only"
       />
 
-      <p class="mt-2 text-sm text-gray-500">
+      <p v-if="errors.photos" class="mt-2 text-sm text-red-600">
+        กรุณาเลือกรูปภาพอย่างน้อย 1 รูป
+      </p>
+      <p v-else class="mt-2 text-sm text-gray-500">
         เลือกได้หลายไฟล์ ({{ existingPhotos.length + selectedFiles.length }} ไฟล์ที่เลือก)
       </p>
     </section>
@@ -451,29 +571,45 @@ onBeforeUnmount(() => {
         v-model="title"
         type="text"
         required
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+        :class="[
+          'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
+          errors.title
+            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+            : 'border-gray-300 focus:ring-sky-500 focus:border-transparent',
+        ]"
         placeholder="เช่น เที่ยวเกาะช้าง"
       />
+      <p v-if="errors.title" class="mt-1 text-sm text-red-600">
+        กรุณากรอกชื่อทริป
+      </p>
     </section>
 
     <!-- 3. Tags -->
     <section>
       <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
-        แท็ก (คั่นด้วย comma)
+        แท็ก (คั่นด้วย comma) <span class="text-red-500">*</span>
       </label>
       <input
         id="tags"
         v-model="tags"
         type="text"
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+        :class="[
+          'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
+          errors.tags
+            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+            : 'border-gray-300 focus:ring-sky-500 focus:border-transparent',
+        ]"
         placeholder="เช่น เกาะ, ทะเล, ธรรมชาติ"
       />
+      <p v-if="errors.tags" class="mt-1 text-sm text-red-600">
+        กรุณากรอกแท็ก
+      </p>
     </section>
 
     <!-- 4. Description -->
     <section>
       <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-        คำอธิบาย
+        คำอธิบาย <span class="text-red-500">*</span>
       </label>
 
       <!-- Markdown toolbar -->
@@ -525,11 +661,19 @@ onBeforeUnmount(() => {
         ref="descriptionTextareaRef"
         v-model="description"
         rows="12"
-        class="w-full px-4 py-2 min-h-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+        :class="[
+          'w-full px-4 py-2 min-h-64 border rounded-lg focus:outline-none focus:ring-2',
+          errors.description
+            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+            : 'border-gray-300 focus:ring-sky-500 focus:border-transparent',
+        ]"
         placeholder="อธิบายเกี่ยวกับทริปนี้... ใช้ Markdown ได้ เช่น **ตัวหนา**, *ตัวเอียง*, [ลิงก์](https://example.com)"
       />
 
-      <p class="mt-2 text-xs text-gray-500">
+      <p v-if="errors.description" class="mt-1 text-sm text-red-600">
+        กรุณากรอกคำอธิบาย
+      </p>
+      <p v-else class="mt-2 text-xs text-gray-500">
         รองรับ Markdown: **ตัวหนา**, *ตัวเอียง*, <code>`โค้ด`</code>, [ลิงก์](https://example.com),
         รายการด้วย
         <code>- item</code>
@@ -540,29 +684,45 @@ onBeforeUnmount(() => {
     <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <label for="latitude" class="block text-sm font-medium text-gray-700 mb-2">
-          Latitude
+          Latitude <span class="text-red-500">*</span>
         </label>
         <input
           id="latitude"
           v-model="latitude"
           type="number"
           step="any"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+          :class="[
+            'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
+            errors.latitude
+              ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+              : 'border-gray-300 focus:ring-sky-500 focus:border-transparent',
+          ]"
           placeholder="13.7563"
         />
+        <p v-if="errors.latitude" class="mt-1 text-sm text-red-600">
+          กรุณากรอก Latitude ที่ถูกต้อง (-90 ถึง 90)
+        </p>
       </div>
       <div>
         <label for="longitude" class="block text-sm font-medium text-gray-700 mb-2">
-          Longitude
+          Longitude <span class="text-red-500">*</span>
         </label>
         <input
           id="longitude"
           v-model="longitude"
           type="number"
           step="any"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+          :class="[
+            'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
+            errors.longitude
+              ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+              : 'border-gray-300 focus:ring-sky-500 focus:border-transparent',
+          ]"
           placeholder="100.5018"
         />
+        <p v-if="errors.longitude" class="mt-1 text-sm text-red-600">
+          กรุณากรอก Longitude ที่ถูกต้อง (-180 ถึง 180)
+        </p>
       </div>
     </section>
 

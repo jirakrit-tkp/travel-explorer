@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Edit, Trash2 } from 'lucide-vue-next'
+import { Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { tripsAPI } from '../services/api'
 import { useAuth } from '../composables/useAuth'
@@ -35,6 +35,8 @@ const trip = ref<Trip | null>(null)
 const loading = ref(false)
 const error = ref('')
 const deleting = ref(false)
+const currentPhotoIndex = ref(0)
+const autoSlideInterval = ref<number | null>(null)
 
 const descriptionHtml = computed(() => {
   if (!trip.value) {
@@ -47,6 +49,55 @@ const descriptionHtml = computed(() => {
 const isOwner = computed(() => {
   return isAuthenticated.value && user.value && trip.value && user.value.userId === trip.value.authorId
 })
+
+const hasPhotos = computed(() => {
+  return trip.value && trip.value.photos && trip.value.photos.length > 0
+})
+
+const totalPhotos = computed(() => {
+  return trip.value?.photos?.length || 0
+})
+
+const nextPhoto = () => {
+  if (!trip.value || !trip.value.photos) return
+  currentPhotoIndex.value = (currentPhotoIndex.value + 1) % trip.value.photos.length
+  resetAutoSlide()
+}
+
+const prevPhoto = () => {
+  if (!trip.value || !trip.value.photos) return
+  currentPhotoIndex.value =
+    currentPhotoIndex.value === 0 ? trip.value.photos.length - 1 : currentPhotoIndex.value - 1
+  resetAutoSlide()
+}
+
+const goToPhoto = (index: number) => {
+  if (!trip.value || !trip.value.photos) return
+  if (index >= 0 && index < trip.value.photos.length) {
+    currentPhotoIndex.value = index
+    resetAutoSlide()
+  }
+}
+
+const startAutoSlide = () => {
+  if (!trip.value || !trip.value.photos || trip.value.photos.length <= 1) return
+
+  autoSlideInterval.value = window.setInterval(() => {
+    nextPhoto()
+  }, 8000) // 8 seconds
+}
+
+const stopAutoSlide = () => {
+  if (autoSlideInterval.value !== null) {
+    clearInterval(autoSlideInterval.value)
+    autoSlideInterval.value = null
+  }
+}
+
+const resetAutoSlide = () => {
+  stopAutoSlide()
+  startAutoSlide()
+}
 
 const fetchTrip = async () => {
   loading.value = true
@@ -96,8 +147,23 @@ const handleDelete = async () => {
   }
 }
 
+watch(
+  () => trip.value?.photos,
+  () => {
+    if (trip.value && trip.value.photos && trip.value.photos.length > 0) {
+      currentPhotoIndex.value = 0
+      startAutoSlide()
+    }
+  },
+  { immediate: true },
+)
+
 onMounted(() => {
   fetchTrip()
+})
+
+onBeforeUnmount(() => {
+  stopAutoSlide()
 })
 </script>
 
@@ -117,18 +183,63 @@ onMounted(() => {
         </div>
 
         <div v-else-if="trip" class="bg-white rounded-lg shadow-md overflow-hidden">
-          <!-- Images -->
-          <div v-if="trip.photos && trip.photos.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-2 p-4">
-            <div
-              v-for="(photo, index) in trip.photos"
-              :key="index"
-              class="aspect-video overflow-hidden rounded-lg bg-gray-200"
+          <!-- Images Carousel -->
+          <div
+            v-if="hasPhotos"
+            class="relative w-full aspect-video bg-gray-200 overflow-hidden"
+            @mouseenter="stopAutoSlide"
+            @mouseleave="startAutoSlide"
+          >
+            <!-- Main Image -->
+            <img
+              :src="trip.photos[currentPhotoIndex]"
+              :alt="`${trip.title} - รูปที่ ${currentPhotoIndex + 1}`"
+              class="w-full h-full object-cover transition-opacity duration-500"
+            />
+
+            <!-- Navigation Buttons -->
+            <button
+              v-if="totalPhotos > 1"
+              @click="prevPhoto"
+              class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors cursor-pointer"
+              aria-label="รูปก่อนหน้า"
             >
-              <img
-                :src="photo"
-                :alt="`${trip.title} - รูปที่ ${index + 1}`"
-                class="w-full h-full object-cover"
+              <ChevronLeft class="h-6 w-6" />
+            </button>
+            <button
+              v-if="totalPhotos > 1"
+              @click="nextPhoto"
+              class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors cursor-pointer"
+              aria-label="รูปถัดไป"
+            >
+              <ChevronRight class="h-6 w-6" />
+            </button>
+
+            <!-- Dot Indicators -->
+            <div
+              v-if="totalPhotos > 1"
+              class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 mb-8"
+            >
+              <button
+                v-for="(photo, index) in trip.photos"
+                :key="index"
+                @click="goToPhoto(index)"
+                :class="[
+                  'h-2 rounded-full transition-all cursor-pointer',
+                  index === currentPhotoIndex
+                    ? 'w-8 bg-white'
+                    : 'w-2 bg-white/50 hover:bg-white/75',
+                ]"
+                :aria-label="`ไปที่รูปที่ ${index + 1}`"
               />
+            </div>
+
+            <!-- Photo Counter -->
+            <div
+              v-if="totalPhotos > 1"
+              class="absolute bottom-4 right-4 z-10 bg-black/50 text-white px-3 py-1 rounded-full text-sm"
+            >
+              {{ currentPhotoIndex + 1 }} / {{ totalPhotos }}
             </div>
           </div>
           <div v-else class="aspect-video bg-gray-200 flex items-center justify-center">
