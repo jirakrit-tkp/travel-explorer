@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, nextTick, onBeforeUnmount, onMounted, watch } from 'vue'
+import { ref, nextTick, onBeforeUnmount, onMounted, watch, computed } from 'vue'
 import { tripsAPI, filesAPI } from '../services/api'
 import type { AxiosResponse } from 'axios'
 import { Bold, Italic, Link, List, Code, X } from 'lucide-vue-next'
+import GoogleMap from './GoogleMap.vue'
 
 interface Trip {
   id: number
@@ -56,6 +57,26 @@ const errors = ref({
   latitude: false,
   longitude: false,
 })
+
+// Computed for map coordinates
+const mapLatitude = computed(() => {
+  const lat = parseFloat(latitude.value)
+  return isNaN(lat) ? undefined : lat
+})
+
+const mapLongitude = computed(() => {
+  const lon = parseFloat(longitude.value)
+  return isNaN(lon) ? undefined : lon
+})
+
+// Handle location selection from map
+const handleLocationSelect = (data: { latitude: number; longitude: number }) => {
+  latitude.value = data.latitude.toString()
+  longitude.value = data.longitude.toString()
+  // Clear errors when location is selected
+  if (errors.value.latitude) errors.value.latitude = false
+  if (errors.value.longitude) errors.value.longitude = false
+}
 
 // Load initial data for edit mode
 watch(
@@ -726,6 +747,23 @@ onBeforeUnmount(() => {
           กรุณากรอก Longitude ที่ถูกต้อง (-180 ถึง 180)
         </p>
       </div>
+    </section>
+
+    <!-- Map Picker -->
+    <section>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        เลือกตำแหน่งบนแผนที่
+      </label>
+      <p class="text-sm text-gray-500 mb-2">
+        คลิกที่แผนที่เพื่อเลือกตำแหน่ง หรือลาก marker เพื่อย้ายตำแหน่ง
+      </p>
+      <GoogleMap
+        :latitude="mapLatitude"
+        :longitude="mapLongitude"
+        :clickable="true"
+        :zoom="10"
+        @location-select="handleLocationSelect"
+      />
     </section>
 
     <div v-if="error" class="text-red-600 text-sm">

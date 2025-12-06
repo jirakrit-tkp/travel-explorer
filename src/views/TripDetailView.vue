@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
+import GoogleMap from '../components/GoogleMap.vue'
 import { tripsAPI } from '../services/api'
 import { useAuth } from '../composables/useAuth'
 import { useSnackbar } from '../composables/useSnackbar'
@@ -284,9 +285,15 @@ onBeforeUnmount(() => {
               </span>
             </div>
 
-            <!-- Location -->
-            <div v-if="trip.latitude && trip.longitude" class="mb-4 text-sm text-gray-600">
-              <p>ตำแหน่ง: {{ trip.latitude }}, {{ trip.longitude }}</p>
+            <!-- Location Map -->
+            <div v-if="trip.latitude && trip.longitude" class="mb-4">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">ตำแหน่ง</h3>
+              <GoogleMap
+                :latitude="trip.latitude"
+                :longitude="trip.longitude"
+                :title="trip.title"
+                :zoom="14"
+              />
             </div>
 
             <!-- Author Info -->
